@@ -2,6 +2,7 @@
 
 import { app, BrowserWindow, Tray, Menu, globalShortcut } from "electron";
 
+const BASE_URL = "http://localhost:8080/";
 let win = null;
 let tray = null;
 let passWordPopup = null;
@@ -22,7 +23,7 @@ const createWindow = async () => {
       webSecurity: false,
     },
   });
-  await win.loadURL("http://localhost:8080");
+  await win.loadURL(BASE_URL);
 };
 
 const createPassWordPopup = async () => {
@@ -30,8 +31,9 @@ const createPassWordPopup = async () => {
     passWordPopup = new BrowserWindow({
       parent: win,
       modal: true,
+      titleBarStyle: "hidden",
     });
-    await passWordPopup.loadURL("http://localhost:8080/master-auth");
+    await passWordPopup.loadURL(BASE_URL + "master-auth");
   } else {
     passWordPopup.focus();
   }
