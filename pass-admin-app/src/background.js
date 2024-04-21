@@ -1,9 +1,10 @@
 "use strict";
 
-import { app, BrowserWindow, Tray, Menu } from "electron";
+import { app, BrowserWindow, Tray, Menu, globalShortcut } from "electron";
 
 let win = null;
 let tray = null;
+let passWordPopup = null;
 
 const destroyApp = () => {
   if (tray && !tray.isDestroyed()) tray.destroy();
@@ -22,6 +23,17 @@ const createWindow = async () => {
     },
   });
   await win.loadURL("http://localhost:8080");
+};
+
+const createPassWordPopup = () => {
+  if (passWordPopup === null || passWordPopup.isDestroyed()) {
+    passWordPopup = new BrowserWindow({
+      parent: win,
+      modal: true,
+    });
+  } else {
+    passWordPopup.focus();
+  }
 };
 
 const createTray = () => {
@@ -44,7 +56,17 @@ const createTray = () => {
 };
 
 app.whenReady().then(() => {
+  const CTRL = "CmdOrCtrl";
+  const SHIFT = "Shift";
+
+  const getAccelerator = (commandList) => {
+    return commandList.join("+");
+  };
   createTray();
+
+  globalShortcut.register(getAccelerator([CTRL, SHIFT, "]"]), () => {
+    createPassWordPopup();
+  });
 });
 
 // app.on("window-all-closed", () => {
