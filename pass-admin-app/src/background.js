@@ -25,12 +25,13 @@ const createWindow = async () => {
   await win.loadURL("http://localhost:8080");
 };
 
-const createPassWordPopup = () => {
+const createPassWordPopup = async () => {
   if (passWordPopup === null || passWordPopup.isDestroyed()) {
     passWordPopup = new BrowserWindow({
       parent: win,
       modal: true,
     });
+    await passWordPopup.loadURL("http://localhost:8080/master-auth");
   } else {
     passWordPopup.focus();
   }
@@ -58,14 +59,15 @@ const createTray = () => {
 app.whenReady().then(() => {
   const CTRL = "CmdOrCtrl";
   const SHIFT = "Shift";
+  const ALT = "Alt";
 
   const getAccelerator = (commandList) => {
     return commandList.join("+");
   };
   createTray();
 
-  globalShortcut.register(getAccelerator([CTRL, SHIFT, "]"]), () => {
-    createPassWordPopup();
+  globalShortcut.register(getAccelerator([CTRL, SHIFT, ALT, "]"]), async () => {
+    await createPassWordPopup();
   });
 });
 
@@ -75,10 +77,10 @@ app.whenReady().then(() => {
 //   }
 // });
 
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) createWindow();
+app.on("activate", async () => {
+  if (BrowserWindow.getAllWindows().length === 0) await createWindow();
 });
 
 app.on("ready", async () => {
-  createWindow();
+  await createWindow();
 });
